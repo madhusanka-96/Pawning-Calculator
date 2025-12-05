@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pawning Loan Calculator</title>
+</head>
+<body>
+    <h1>Loan Interest Calculator</h1>
+
+    <input id="loanAmount" type="number" placeholder="Loan Amount">
+    <input id="interestRate" type="number" placeholder="Interest Rate">
+    <input id="lastPaymentDate" type="date">
+    <input id="today" type="date" value="2025-12-02">
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="result"></div>
+
+    <script>
+    async function calculate() {
+        const res = await fetch('http://localhost:5000/calculate-interest', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                loanAmount: +document.getElementById('loanAmount').value,
+                interestRate: +document.getElementById('interestRate').value,
+                lastPaymentDate: document.getElementById('lastPaymentDate').value,
+                today: document.getElementById('today').value
+            })
+        });
+
+        const data = await res.json();
+
+        document.getElementById('result').innerHTML = `
+            Days Gap: ${data.daysGap}<br>
+            Complete 365-Day Blocks: ${data.completeYears}<br>
+            Due Days: ${data.dueDays}<br>
+            Extra Days: ${data.extraDays}<br>
+            Accrued Interest: ${data.accruedInterest}<br>
+            Due Interest: ${data.dueInterest}<br>
+            Total Interest: ${data.totalInterest}
+        `;
+    }
+    </script>
+</body>
+</html>
